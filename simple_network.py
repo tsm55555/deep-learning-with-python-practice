@@ -20,6 +20,7 @@ import math
 import numpy as np
 from tqdm import tqdm
 import time
+
 class BatchGenerator:
     def __init__(self, images, labels, batch_size):
         assert len(images) == len(labels)
@@ -109,13 +110,14 @@ train_images = train_images.astype('float32')/255
 test_images = test_images.reshape((10000, 28*28))
 test_images = test_images.astype('float32')/255
 
+batch_size = 32
 model = NaiveSequential([
     NaiveDense(input_size=28*28, output_size=512, acitvation=tf.nn.relu),
     NaiveDense(input_size=512, output_size=10, acitvation=tf.nn.softmax)
 ])
 
 start = time.time()
-fit(model, train_images, train_labels, epochs=10, batch_size=128)
+fit(model, train_images, train_labels, epochs=10, batch_size=batch_size)
 end = time.time()
 
 pred = model(test_images)
@@ -123,4 +125,5 @@ pred = pred.numpy()
 pred_labels = np.argmax(pred, axis=1)
 matches = pred_labels == test_labels
 print("training time: ", end - start)
+print("batch_size:", batch_size)
 print(f'acc: {matches.mean():.2f}')
